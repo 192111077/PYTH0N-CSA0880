@@ -1,0 +1,25 @@
+print("enter the marks obtained in the 5 subject")
+a=int(input())
+b=int(input())
+c=int(input())
+d=int(input())
+e=int(input())
+total=a+b+c+d+e
+avg=total/5
+print("the avg marks:",avg)
+if avg>=90 :
+    print("Your Grade is s")
+elif avg>=80 and avg<89:
+    print("Your Grade is A")
+elif avg>=70 and avg<79:
+    print("Your Grade is B")
+elif avg>=60 and avg<69:
+    print("Your Grade is c")
+elif avg>=50 and avg<59:
+    print("Your Grade is D")
+elif avg>=41 and avg<49:
+    print("Your Grade is E")
+elif avg>=40:
+    print("Your Grade is F")
+else:
+    print("Invalid Input!")
