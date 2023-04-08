@@ -1,0 +1,9 @@
+n=int(input("enter the number of scores:"))
+scores=list(map(int,input("enter the scores sepersted by space:").split()))
+scores=list(set(scores))
+scores.sort(reverse=True)
+if len(scores)<2:
+  print("there is no runner up score")
+else:
+    print("the run up score is:",scores[1])
+
