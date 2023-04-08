@@ -1,0 +1,10 @@
+shopping_list = []
+
+while True:
+    item = input("Enter an item for your shopping list (or 'end' to finish): ")
+    if item == "end":
+        break
+    else:
+        shopping_list.append(item)
+print("your shopping list:")
+print(shopping_list)
