@@ -1,0 +1,67 @@
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+from xgboost import XGBRegressor
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+
+# Load your dataset
+main_df = pd.read_csv('/content/data.csv')
+main_df = main_df.drop(['day', 'hour', 'sample_Number', 'month', 'timestamp'], axis=1)
+
+# Assuming handle_non_numeric is meant for handling non-numeric data
+# Replace it with a suitable method, for example, one-hot encoding
+main_df = pd.get_dummies(main_df)
+
+X = main_df
+
+scaler = MinMaxScaler()
+
+X = pd.DataFrame(scaler.fit_transform(X),
+                 columns=X.columns,
+                 index=X.index)
+
+X = np.array(X)
+
+# Define the sequence length (number of time steps for each input sample)
+sequence_length = 9
+
+# Create sequences of data
+sequences = []
+target = []
+for i in range(len(X) - sequence_length):
+    seq = X[i:i+sequence_length]
+    label = X[i+sequence_length]
+    sequences.append(seq)
+    target.append(label)
+
+X_data = np.array(sequences)
+y_data = np.array(target)
+
+# Perform 10 iterations with shuffled data
+num_iterations = 20
+for iteration in range(num_iterations):
+    # Split the data into training and testing sets with shuffling
+    X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=0.2, shuffle=True)
+
+    # Flatten the sequences for XGBoost input
+    X_train_flattened = X_train.reshape((X_train.shape[0], -1))
+    X_test_flattened = X_test.reshape((X_test.shape[0], -1))
+
+    # Build the XGBoost model
+    xgb_model = XGBRegressor(random_state=42)
+
+    # Train the XGBoost model
+    xgb_model.fit(X_train_flattened, y_train)
+
+    # Make predictions on the test set
+    y_pred = xgb_model.predict(X_test_flattened)
+
+    # Convert predictions to binary classes based on a threshold (you can adjust this threshold)
+    threshold = 0.5
+    y_pred_binary = np.where(y_pred >= threshold, 1, 0)
+    y_test_binary = np.where(y_test >= threshold, 1, 0)
+
+    # Calculate accuracy for the current iteration
+    accuracy = accuracy_score(y_test_binary, y_pred_binary)
+    print(f'Accuracy on Test Data (Iteration {iteration + 1}): {accuracy*100}')
